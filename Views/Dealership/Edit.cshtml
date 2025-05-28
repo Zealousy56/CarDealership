@@ -1,0 +1,34 @@
+﻿@model Car
+
+<h2>Edit Car</h2>
+
+<form asp-action="Details" method="post">
+    <input type="hidden" asp-for="Id" /> <!-- Hidden field for Id -->
+    <div>
+        <img src="@Model.PictureUrl.Replace("wwwroot\\","")" class="card-img-top" style="width:200px; height:auto;" />
+        <input type="file" name="file" class="form-control" />
+    </div>
+    <div>
+        <label asp-for="Make"></label>
+        <input asp-for="Make" class="form-control" required />
+    </div>
+    <div>
+        <label asp-for="Model"></label>
+        <input asp-for="Model" class="form-control" required />
+    </div>
+    <div>
+        <label asp-for="Price"></label>
+        <input asp-for="Price" class="form-control" type="number" required />
+    </div>
+    <div>
+        <label asp-for="ReleaseYear"></label>
+        <input asp-for="ReleaseYear" class="form-control" type="number" required />
+    </div>
+    <div>
+        <label asp-for="Description"></label>
+        <input asp-for="Description" class="form-control" required />
+    </div>
+    <button type="submit" class="btn btn-success">Save Changes</button>
+</form>
+
+<a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">Cancel</a>

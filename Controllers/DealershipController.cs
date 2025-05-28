@@ -63,8 +63,67 @@ namespace CarDealership.Controllers
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        [Route("api/uploadpictures")]
-        public async Task<IActionResult> AddCar(Car car, [FromForm] IFormFile file)
+        [Route("api/addcar")]
+        public async Task<IActionResult> AddCar(CarViewModel carvm, [FromForm] IFormFile file)
+        {
+            if (file == null || file.Length <= 0 || string.IsNullOrEmpty(file.FileName))
+            {
+                return Ok(carvm);
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return Ok(carvm);
+            }
+
+            var path = Path.Combine("wwwroot", file.FileName);
+            using (var stream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write))
+            {
+                await file.CopyToAsync(stream);
+            }
+            carvm.NewCar.PictureUrl = path;
+            _context.Cars.Add(carvm.NewCar);
+            await _context.SaveChangesAsync();
+
+            carvm.Cars = await _context.Cars.ToListAsync();
+            return Ok(carvm);
+        }
+
+
+        public async Task<IActionResult> Details(string id)
+        {
+            var car = await _context.Cars.FindAsync(id);
+            if (car == null)
+            {
+                return NotFound(); // Handle case where car doesn't exist
+            }
+            return View(car); // Pass car to the view
+        }
+
+        [HttpGet]
+        [Route("api/getcar")]
+        public async Task<IActionResult> GetCar(string id)
+        {
+            var car = await _context.Cars.FindAsync(id);
+            if (car == null)
+            {
+                return NotFound(); // Handle case where car doesn't exist
+            }
+            return Ok(car); // Pass car to the view
+        }
+
+        public async Task<IActionResult> Edit(string id)
+        {
+            var car = await _context.Cars.FindAsync(id);
+            if (car == null)
+            {
+                return NotFound(); // Handle case where car doesn't exist
+            }
+            return View(car); // Pass car to the view
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveEdit(Car car, [FromForm] IFormFile file)
         {
             if (file == null || file.Length <= 0 || string.IsNullOrEmpty(file.FileName))
             {
@@ -82,10 +141,80 @@ namespace CarDealership.Controllers
                 await file.CopyToAsync(stream);
             }
             car.PictureUrl = path;
-            _context.Cars.Add(car);
+            _context.Update(car);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Details", new { id = car.Id });
+        }
+
+        [HttpPost]
+        [Route("api/editcar")]
+        public async Task<IActionResult> SaveCarEdit(Car car, [FromForm] IFormFile file)
+        {
+            if (file == null || file.Length <= 0 || string.IsNullOrEmpty(file.FileName))
+            {
+                return Ok(car);
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return Ok(car);
+            }
+
+            var path = Path.Combine("wwwroot", file.FileName);
+            using (var stream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write))
+            {
+                await file.CopyToAsync(stream);
+            }
+            car.PictureUrl = path;
+            _context.Update(car);
+            await _context.SaveChangesAsync();
+
+            return Ok("Car updated successfully");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(string id)
+        {
+            var car = await _context.Cars.FindAsync(id);
+            if (car != null)
+            {
+                // Construct file path
+                string imagePath = car.PictureUrl;
+
+                // Check if the image file exists before attempting to delete
+                if (System.IO.File.Exists(imagePath))
+                {
+                    System.IO.File.Delete(imagePath); // Delete the file
+                }
+
+
+                _context.Cars.Remove(car);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction("Index"); // Go back to car list after deleting
+        }
+
+        [HttpPost]
+        [Route("api/deletecar")]
+        public async Task<IActionResult> DeleteCar(string id)
+        {
+            var car = await _context.Cars.FindAsync(id);
+            if (car != null)
+            {
+                // Construct file path
+                string imagePath = car.PictureUrl;
+
+                // Check if the image file exists before attempting to delete
+                if (System.IO.File.Exists(imagePath))
+                {
+                    System.IO.File.Delete(imagePath); // Delete the file
+                }
+
+                _context.Cars.Remove(car);
+                await _context.SaveChangesAsync();
+            }
+            return Ok("Car deleted successfully"); // Go back to car list after deleting
         }
     }
 }

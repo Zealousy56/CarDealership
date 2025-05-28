@@ -6,7 +6,8 @@
         public string Make { get; set; }
         public string Model {  get; set; }
         public string Description { get; set; }
+        public int ReleaseYear {  get; set; }
         public int Price { get; set; }
-        public string PictureUrl { get; set; }
+        public string? PictureUrl { get; set; }
     }
 }

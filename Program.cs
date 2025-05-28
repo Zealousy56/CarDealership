@@ -35,5 +35,6 @@ app.MapControllerRoute(
     pattern: "{controller=Dealership}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+app.UseStaticFiles();
 
 app.Run();
