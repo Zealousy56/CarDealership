@@ -1,0 +1,20 @@
+﻿@model List<Car>
+
+@if (Model != null && Model.Count > 0)
+{
+    foreach (var car in Model)
+    {
+        <img src="@car.PictureUrl.Replace("wwwroot\\","")" class="card-img-top" style="width:200px; height:auto;" />
+        <p>@car.Name</p>
+        <p>"&"+@car.Price</p>
+        <p>@car.Description</p>
+    }
+}
+
+<div asp-validation-summary="All"></div>
+
+<h3>Add a Car</h3>
+<form asp-action="Index" enctype="multipart/form-data">
+    <input type="file" name="file"/>
+    <button class="btn-primary">Add</button>
+</form>
