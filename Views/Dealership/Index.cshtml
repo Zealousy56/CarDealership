@@ -1,12 +1,12 @@
-﻿@model List<Car>
+﻿@model CarViewModel
 
-@if (Model != null && Model.Count > 0)
+@if (Model != null && Model.Cars.Count > 0)
 {
-    foreach (var car in Model)
+    foreach (var car in Model.Cars)
     {
         <img src="@car.PictureUrl.Replace("wwwroot\\","")" class="card-img-top" style="width:200px; height:auto;" />
-        <p>@car.Name</p>
-        <p>"&"+@car.Price</p>
+        <p>@car.Make @car.Model</p>
+        <p>"&"@car.Price</p>
         <p>@car.Description</p>
     }
 }
@@ -14,7 +14,16 @@
 <div asp-validation-summary="All"></div>
 
 <h3>Add a Car</h3>
-<form asp-action="Index" enctype="multipart/form-data">
-    <input type="file" name="file"/>
+<form asp-action="Index" method="post" enctype="multipart/form-data">
+
+    <label>Make:</label>
+    <input asp-for="NewCar.Make" class="form-control" required />
+    <label>Model:</label>
+    <input asp-for="NewCar.Model" class="form-control" required />
+    <label>Price:</label>
+    <input asp-for="NewCar.Price" class="form-control" required />
+    <label>Description:</label>
+    <input asp-for="NewCar.Description" class="form-control" required />
+    <input type="file" name="file" />
     <button class="btn-primary">Add</button>
 </form>

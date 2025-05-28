@@ -7,55 +7,45 @@ namespace CarDealership.Controllers
 {
     public class DealershipController : Controller
     {
-        private readonly ILogger<DealershipController> _logger;
         private readonly CarsDbContext _context;
 
 
-        public DealershipController(ILogger<DealershipController> logger, CarsDbContext context)
+        public DealershipController(CarsDbContext context)
         {
-            _logger = logger;
             _context = context;
         }
 
         public async Task<IActionResult> Index()
         {
-            var cars = await _context.Cars.ToListAsync();
-            if (cars.Count > 0)
+            var carViewModel = new CarViewModel
             {
-                return View(cars);
-            }
-            else
-            {
-                return View();
-            }
+                Cars = await _context.Cars.ToListAsync() // Fetch data from DB
+            };
+            return View(carViewModel);
         }
 
         [HttpGet]
         [Route("api/getcars")]
         public async Task<IActionResult> GetCarsAPI()
         {
-            var cars = await _context.Cars.ToListAsync();
-            if (cars.Count > 0)
+            var carViewModel = new CarViewModel
             {
-                return Ok(cars);
-            }
-            else
-            {
-                return Ok("Dealership is empty");
-            }
+                Cars = await _context.Cars.ToListAsync() // Fetch data from DB
+            };
+            return Ok(carViewModel);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Index(Car car, [FromForm] IFormFile file)
+        public async Task<IActionResult> Index(CarViewModel carvm, [FromForm] IFormFile file)
         {
             if (file == null || file.Length <= 0 || string.IsNullOrEmpty(file.FileName))
             {
-                return View(car);
+                return View(carvm);
             }
 
             if (!ModelState.IsValid)
             {
-                return View(car);
+                return View(carvm);
             }
 
             var path = Path.Combine("wwwroot", file.FileName);
@@ -63,17 +53,18 @@ namespace CarDealership.Controllers
             {
                 await file.CopyToAsync(stream);
             }
-            car.PictureUrl = path;
-            _context.Cars.Add(car);
+            carvm.NewCar.PictureUrl = path;
+            _context.Cars.Add(carvm.NewCar);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Index");
+            carvm.Cars = await _context.Cars.ToListAsync();
+            return RedirectToAction("Index", carvm);
         }
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [Route("api/uploadpictures")]
-        public async Task<IActionResult> UploadCar(Car car, [FromForm] IFormFile file)
+        public async Task<IActionResult> AddCar(Car car, [FromForm] IFormFile file)
         {
             if (file == null || file.Length <= 0 || string.IsNullOrEmpty(file.FileName))
             {
