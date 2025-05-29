@@ -1,4 +1,8 @@
-﻿@model CarViewModel
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+@model CarViewModel
 
 @if (Model != null && Model.Cars.Count > 0)
 {
@@ -28,19 +32,22 @@
 
 <div asp-validation-summary="All"></div>
 
-<h3>Add a Car</h3>
-<form asp-action="Index" method="post" enctype="multipart/form-data">
+@if(User.IsInRole("Admin"))
+{
+    <h3>Add a Car</h3>
+    <form asp-action="Index" method="post" enctype="multipart/form-data">
 
-    <label>Make:</label>
-    <input asp-for="NewCar.Make" class="form-control" required />
-    <label>Model:</label>
-    <input asp-for="NewCar.Model" class="form-control" required />
-    <label>Year of Release:</label>
-    <input asp-for="NewCar.ReleaseYear" class="form-control" required />
-    <label>Price:</label>
-    <input asp-for="NewCar.Price" class="form-control" required />
-    <label>Description:</label>
-    <input asp-for="NewCar.Description" class="form-control" required />
-    <input type="file" name="file" required/>
-    <button class="btn-primary">Add</button>
-</form>
+        <label>Make:</label>
+        <input asp-for="NewCar.Make" class="form-control" required />
+        <label>Model:</label>
+        <input asp-for="NewCar.Model" class="form-control" required />
+        <label>Year of Release:</label>
+        <input asp-for="NewCar.ReleaseYear" class="form-control" required />
+        <label>Price:</label>
+        <input asp-for="NewCar.Price" class="form-control" required />
+        <label>Description:</label>
+        <input asp-for="NewCar.Description" class="form-control" required />
+        <input type="file" name="file" required/>
+        <button class="btn-primary">Add</button>
+    </form>
+}

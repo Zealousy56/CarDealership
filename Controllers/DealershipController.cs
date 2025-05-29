@@ -1,5 +1,6 @@
 ﻿using CarDealership.Data;
 using CarDealership.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,7 +27,7 @@ namespace CarDealership.Controllers
 
         [HttpGet]
         [Route("api/getcars")]
-        public async Task<IActionResult> GetCarsAPI()
+        public async Task<IActionResult> GetCars()
         {
             var carViewModel = new CarViewModel
             {
@@ -36,6 +37,7 @@ namespace CarDealership.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index(CarViewModel carvm, [FromForm] IFormFile file)
         {
             if (file == null || file.Length <= 0 || string.IsNullOrEmpty(file.FileName))
@@ -64,6 +66,7 @@ namespace CarDealership.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [Route("api/addcar")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddCar(CarViewModel carvm, [FromForm] IFormFile file)
         {
             if (file == null || file.Length <= 0 || string.IsNullOrEmpty(file.FileName))
@@ -112,6 +115,7 @@ namespace CarDealership.Controllers
             return Ok(car); // Pass car to the view
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(string id)
         {
             var car = await _context.Cars.FindAsync(id);
@@ -123,6 +127,7 @@ namespace CarDealership.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> SaveEdit(Car car, [FromForm] IFormFile file)
         {
             if (file == null || file.Length <= 0 || string.IsNullOrEmpty(file.FileName))
@@ -149,6 +154,7 @@ namespace CarDealership.Controllers
 
         [HttpPost]
         [Route("api/editcar")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> SaveCarEdit(Car car, [FromForm] IFormFile file)
         {
             if (file == null || file.Length <= 0 || string.IsNullOrEmpty(file.FileName))
@@ -173,7 +179,9 @@ namespace CarDealership.Controllers
             return Ok("Car updated successfully");
         }
 
+
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(string id)
         {
             var car = await _context.Cars.FindAsync(id);
@@ -197,6 +205,7 @@ namespace CarDealership.Controllers
 
         [HttpPost]
         [Route("api/deletecar")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteCar(string id)
         {
             var car = await _context.Cars.FindAsync(id);

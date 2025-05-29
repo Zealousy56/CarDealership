@@ -1,0 +1,21 @@
+﻿<h2>Admin Login</h2>
+
+<form method="post">
+    <div>
+        <label>Email:</label>
+        <input type="email" name="email" class="form-control" required />
+    </div>
+    <div>
+        <label>Password:</label>
+        <input type="password" name="password" class="form-control" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Login</button>
+</form>
+
+@if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+{
+    <p class="text-danger">@ViewBag.ErrorMessage</p>
+}
+
+
+

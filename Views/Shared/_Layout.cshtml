@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -21,7 +25,7 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Dealership" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="ContactUs" asp-action="Index">Contact Us</a>
                         </li>
                     </ul>
                 </div>
@@ -36,7 +40,15 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2025 - CarDealership - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2025 - CarDealership -
+            @if (SignInManager.IsSignedIn(User))
+            {
+                <a asp-area="" asp-controller="Account" asp-action="LogOut">Log Out</a>
+            }
+            else
+            {
+                <a asp-area="" asp-controller="Account" asp-action="LogIn">Log In</a>
+            }       
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

@@ -1,4 +1,8 @@
-﻿@model Car
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+@model Car
 
 <img src="@Model.PictureUrl.Replace("wwwroot\\","")" class="card-img-top" style="width:200px; height:auto;" />
 <p>@Model.Make @Model.Model</p>
@@ -6,14 +10,17 @@
 <p>£@Model.Price</p>
 <p>@Model.Description</p>
 
-<!-- Edit Button -->
-<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+@if (User.IsInRole("Admin"))
+{
+    <!-- Edit Button -->
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
 
 
-<!-- Delete Button (uses a form to handle the deletion) -->
-<form asp-action="Delete" method="post" style="display:inline;">
-    <input type="hidden" name="id" value="@Model.Id" />
-    <button type="submit" class="btn btn-danger">Delete</button>
-</form>
+    <!-- Delete Button (uses a form to handle the deletion) -->
+    <form asp-action="Delete" method="post" style="display:inline;">
+        <input type="hidden" name="id" value="@Model.Id" />
+        <button type="submit" class="btn btn-danger">Delete</button>
+    </form>
 
-<a asp-action="Index" class="btn btn-secondary">Back</a>
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+}

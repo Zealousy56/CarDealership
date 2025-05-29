@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using System;
 using CarDealership.Data;
+using Microsoft.AspNetCore.Identity;
+using CarDealership.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DealershipDatabase" ?? throw new InvalidOperationException("Invalid connection string"));
@@ -10,6 +12,17 @@ var connectionString = builder.Configuration.GetConnectionString("DealershipData
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddSqlServer<CarsDbContext>(connectionString, opts => opts.EnableRetryOnFailure());
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<CarsDbContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.AddSingleton<EmailService>();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login"; // Redirect if not logged in
+});
 
 var app = builder.Build();
 
@@ -36,5 +49,24 @@ app.MapControllerRoute(
     .WithStaticAssets();
 
 app.UseStaticFiles();
+
+var scope = app.Services.CreateScope();
+var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+// Create Admin role
+if (!await roleManager.RoleExistsAsync("Admin"))
+{
+    await roleManager.CreateAsync(new IdentityRole("Admin"));
+}
+
+// Create Admin user (Replace with your admin credentials)
+var adminUser = await userManager.FindByEmailAsync("zenasagada.bincom@gmail.com");
+if (adminUser == null)
+{
+    adminUser = new IdentityUser { UserName = "Zenas", Email = "zenasagada.bincom@gmail.com" };
+    await userManager.CreateAsync(adminUser, "Password123!"); // Strong password
+    await userManager.AddToRoleAsync(adminUser, "Admin");
+}
 
 app.Run();
