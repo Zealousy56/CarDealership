@@ -12,5 +12,6 @@ namespace CarDealership.Data
         { }
 
         public DbSet<Car> Cars { get; set; }
+        public DbSet<ContactUs> Inquiries { get; set; }
     }
 }

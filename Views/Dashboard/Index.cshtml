@@ -1,0 +1,24 @@
+﻿@model List<ContactUs>
+
+@if (Model != null && Model.Count > 0)
+{
+
+    <div class="container">
+        <div class="row">
+            @foreach (var inq in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <a asp-action="Details" asp-route-id="@inq.Id" class="card-link">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">@inq.Subject</h5>
+                                <p class="card-text"><strong>From: </strong>@inq.Name</p>
+                                <p class="card-text"><strong>Email: </strong>£@inq.Email</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+}

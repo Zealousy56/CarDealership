@@ -1,0 +1,11 @@
+﻿@model ContactUs
+
+<h1>@Model.Subject</h1>
+<p>From: @Model.Name</p>
+<p>Email: @Model.Email</p>
+<p>@Model.Message</p>
+
+<form asp-action="Delete" method="post" style="display:inline;">
+    <input type="hidden" name="id" value="@Model.Id" />
+    <button type="submit" class="btn btn-danger">Mark as Read</button>
+</form>

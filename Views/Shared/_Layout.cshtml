@@ -43,6 +43,13 @@
             &copy; 2025 - CarDealership -
             @if (SignInManager.IsSignedIn(User))
             {
+                <a asp-area="" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+            }
+
+             - 
+
+            @if (SignInManager.IsSignedIn(User))
+            {
                 <a asp-area="" asp-controller="Account" asp-action="LogOut">Log Out</a>
             }
             else
